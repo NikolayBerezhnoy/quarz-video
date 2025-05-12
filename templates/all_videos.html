@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+    {% for video in videos %}
+    <div class="col-md-3 mb-3">  <!-- 3 колонки (12/4=3) -->
+        <div class="card h-100">  <!-- h-100 для одинаковой высоты -->
+            <img src="https://timeweb.com/ru/community/article/22/2270efcac88761766181c1aa5322b615.jpg" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">Видео {{ loop.index }}</h5>
+                <p class="card-text">Описание видео или другой контент.</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
