@@ -1,14 +1,14 @@
-from flask import Flask, render_template, redirect, flash
-from flask import make_response, jsonify
-from flask_login import LoginManager
-from flask_login import login_required
-from flask_login import login_user
-from flask_restful import Api
+import os
 
-from data.users import User
+from flask import Flask, render_template, redirect, send_from_directory
+from flask_login import LoginManager
+from flask_login import login_user
+
 from data import db_session
+from data.users import User
 from forms.loginform import LoginForm
 from forms.user import RegisterForm
+from forms.comment_form import CommentForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "abc"
@@ -29,7 +29,30 @@ def load_user(user_id):
 @app.route('/')
 @app.route('/index')
 def index(title='Домашняя страница', user_name='no-name'):
-    return render_template('all_videos.html', videos=[1, 2, 3, 4, 1, 2, 3, 1, 2, 3])
+    return render_template('all_videos.html', title=title, videos=[1, 2, 3, 4, 1, 2, 3, 1, 2, 3])
+
+
+@app.route('/video/<int:id>')
+def video(id):
+    form = CommentForm()
+
+    # Проверяем существование видеофайла
+    video_path = os.path.join('content', 'videos', f'{id}.mp4')
+    video_exists = os.path.exists(video_path)
+
+    return render_template(
+        'video.html',
+        title=f'Видео #{id}',
+        id=id,
+        form=form,
+        video_exists=video_exists  # Передаем информацию о наличии видео в шаблон
+    )
+
+
+# Маршрут для отдачи видеофайлов
+@app.route('/content/videos/<path:filename>')
+def serve_video(filename):
+    return send_from_directory('content/videos', filename)
 
 
 @app.route('/register', methods=['GET', 'POST'])

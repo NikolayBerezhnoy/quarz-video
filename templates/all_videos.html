@@ -3,14 +3,32 @@
 <div class="row">
     {% for video in videos %}
     <div class="col-md-3 mb-3">  <!-- 3 колонки (12/4=3) -->
-        <div class="card h-100">  <!-- h-100 для одинаковой высоты -->
-            <img src="https://timeweb.com/ru/community/article/22/2270efcac88761766181c1aa5322b615.jpg" class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 class="card-title">Видео {{ loop.index }}</h5>
-                <p class="card-text">Описание видео или другой контент.</p>
+        <a href="{{ url_for('video', id=loop.index) }}" class="text-decoration-none text-dark">  <!-- Ссылка на видео -->
+            <div class="card h-100 transition hover-shadow">  <!-- h-100 для одинаковой высоты -->
+                <img src="https://timeweb.com/ru/community/article/22/2270efcac88761766181c1aa5322b615.jpg" class="card-img-top" alt="Превью видео">
+                <div class="card-body">
+                    <h5 class="card-title">Видео {{ loop.index }}</h5>
+                    <p class="card-text">Описание видео или другой контент.</p>
+                </div>
             </div>
-        </div>
+        </a>
     </div>
     {% endfor %}
 </div>
+
+<style>
+    /* Добавляем плавные переходы */
+    .transition {
+        transition: all 0.3s ease;
+    }
+    /* Эффект при наведении */
+    .hover-shadow:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        transform: translateY(-5px);
+    }
+    /* Убираем подчеркивание у ссылок */
+    .text-decoration-none {
+        text-decoration: none !important;
+    }
+</style>
 {% endblock %}
