@@ -1,27 +1,49 @@
-<!--<link href="/static/css/styles.css" rel="stylesheet">-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>{{ title }}</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Lexend Exa Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Lexend+Exa:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Your custom CSS -->
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
 </head>
 <body>
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #0C0D0A;">
+    <a class="navbar-brand navbar-brand-custom" href="/">quarz</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
 
-<nav class="navbar navbar-light bg-light">
-    {% if 0%}
-    <a class="navbar-brand" href="/logout">123</a>
-    {% else %}
-    <p>
-        <a class="btn btn-secondary btn-sm" href="/register">sign up</a>
-        <a class="btn btn-primary btn-sm" href="/login">sign in</a>
-    </p>
-    {% endif %}
-    <div class="container-fluid">
-        <a class="navbar-brand"><h2>quarz</h2></a>
-        <form class="d-flex">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">go</button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="/login">войти <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/register">регистрация</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false">
+                    список
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="#">Action</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                </div>
+            </li>
+            <!--      <li class="nav-item">-->
+            <!--        <a class="nav-link disabled" href="#">Disabled</a>-->
+            <!--      </li>-->
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="поиск...">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">искать</button>
         </form>
     </div>
 </nav>
@@ -33,7 +55,6 @@
 <!-- Begin page content -->
 <main class="container" role="main">
     {% block content %}{% endblock %}
-
 </main>
 </body>
 </html>

@@ -1,0 +1,13 @@
+/* Custom font only for "quarz" */
+.navbar-brand-custom {
+    font-family: 'Lexend Exa', sans-serif;
+    font-weight: 100;
+    font-size: 1.8rem;
+    letter-spacing: 0.1px;
+    color: #ffffff; /* Ensures white text on dark navbar */
+}
+
+/* Optional: Add hover effect */
+.navbar-brand-custom:hover {
+    opacity: 0.8;
+}
