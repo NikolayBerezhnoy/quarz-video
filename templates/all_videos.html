@@ -1,21 +1,30 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="row">
-    {% for video in videos %}
-    <div class="col-md-3 mb-3">  <!-- 3 колонки (12/4=3) -->
-        <a href="{{ url_for('video', id=loop.index) }}" class="text-decoration-none text-dark">
-            <!-- Ссылка на видео -->
-            <div class="card h-100 transition hover-shadow">  <!-- h-100 для одинаковой высоты -->
-                <img src="{{ url_for('get_preview', filename=video ~ '.png') }}" class="card-img-top"
-                     alt="Превью видео">
-                <div class="card-body">
-                    <h5 class="card-title">Видео {{ loop.index }}</h5>
-                    <p class="card-text">Описание видео или другой контент.</p>
+<div class="container">
+    <div class="row">
+        {% for video in videos %}
+        <div class="col-md-3 mb-4">  <!-- 3 колонки (12/4=3) -->
+            <a href="{{ url_for('video', id=video.id) }}" class="text-decoration-none text-dark">
+                <!-- Ссылка на видео -->
+                <div class="card h-100 transition hover-shadow">  <!-- h-100 для одинаковой высоты -->
+                    <img src="{{ url_for('get_preview', filename=video.id ~ '.png') }}"
+                         class="card-img-top"
+                         alt="{{ video.title }}"
+                         onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/default-preview.png') }}';">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ video.title }}</h5>
+                        <p class="card-text text-muted">
+                            Просмотров: {{ video.views }}<br>
+                            {% if video.author_user %}
+                            Автор: {{ video.author_user.name }}
+                            {% endif %}
+                        </p>
+                    </div>
                 </div>
-            </div>
-        </a>
+            </a>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
 
 <style>

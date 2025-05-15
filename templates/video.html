@@ -24,24 +24,32 @@
                 {% endif %}
 
                 <div class="card-body p-3">
-                    <h2 class="card-title mb-1">Название видео #{{ id }}</h2>
+                    <h2 class="card-title mb-1">{{ video.title }}</h2>
                     <div class="d-flex align-items-center mb-3">
-                        <span class="text-muted mr-3"><i class="far fa-eye mr-1"></i> 1,234 просмотров</span>
-                        <span class="text-muted"><i class="far fa-user mr-1"></i> Автор видео</span>
+                        <span class="text-muted mr-3"><i
+                                class="far fa-eye mr-1"></i> {{ video.views }} просмотров</span>
+                        {% if author %}
+                        <span class="text-muted"><i class="far fa-user mr-1"></i> {{ author.name }}</span>
+                        {% endif %}
+                        <span class="text-muted ml-3"><i class="far fa-calendar-alt mr-1"></i> {{ video.modified_date.strftime('%d.%m.%Y') }}</span>
                     </div>
 
                     <!-- Like/Dislike Buttons -->
-                    <div class="btn-group mb-4" role="group">
-                        <button type="button" class="btn btn-outline-success like-btn">
-                            <i class="far fa-thumbs-up"></i> <span class="like-count">42</span>
-                        </button>
-                        <button type="button" class="btn btn-outline-danger dislike-btn">
-                            <i class="far fa-thumbs-down"></i> <span class="dislike-count">3</span>
-                        </button>
-                    </div>
+                    <button type="button" class="btn btn-outline-success like-btn {% if user_liked %}active{% endif %}">
+                        <i class="far fa-thumbs-up"></i> <span class="like-count">{{ video.likes }}</span>
+                    </button>
+                    <button type="button"
+                            class="btn btn-outline-danger dislike-btn {% if user_disliked %}active{% endif %}">
+                        <i class="far fa-thumbs-down"></i> <span class="dislike-count">{{ video.dislikes }}</span>
+                    </button>
 
                     <!-- Description -->
-                    <p class="card-text">Описание видео. Здесь может быть подробная информация о содержании ролика.</p>
+                    {% if video.description %}
+                    <div class="card-text mb-4">
+                        <h5>Описание</h5>
+                        <p>{{ video.description }}</p>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
 
@@ -111,32 +119,64 @@
         height: 50px;
         object-fit: cover;
     }
+    .card-text pre {
+        white-space: pre-wrap;
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 5px;
+    }
 </style>
 
 <!-- Scripts -->
 <script>
-    // Like/Dislike functionality
+    // Like/Dislike functionality with AJAX
     document.querySelectorAll('.like-btn, .dislike-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const isLike = this.classList.contains('like-btn');
             const counter = this.querySelector('span');
+            const videoId = {{ id }};
 
             if (this.classList.contains('active')) {
                 // Remove reaction
-                this.classList.remove('active');
-                counter.textContent = parseInt(counter.textContent) - 1;
+                fetch(isLike ? `/like_video/${videoId}` : `/dislike_video/${videoId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.error) {
+                        this.classList.remove('active');
+                        counter.textContent = isLike ? data.likes : data.dislikes;
+                    } else {
+                        alert(data.error);
+                    }
+                });
             } else {
                 // Add reaction
-                this.classList.add('active');
-                counter.textContent = parseInt(counter.textContent) + 1;
+                fetch(isLike ? `/like_video/${videoId}` : `/dislike_video/${videoId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.error) {
+                        this.classList.add('active');
+                        counter.textContent = isLike ? data.likes : data.dislikes;
 
-                // Remove opposite reaction if exists
-                const oppositeBtn = isLike ? '.dislike-btn' : '.like-btn';
-                if (document.querySelector(oppositeBtn).classList.contains('active')) {
-                    document.querySelector(oppositeBtn).classList.remove('active');
-                    document.querySelector(oppositeBtn + ' span').textContent =
-                        parseInt(document.querySelector(oppositeBtn + ' span').textContent) - 1;
-                }
+                        // Remove opposite reaction if exists
+                        const oppositeBtn = isLike ? '.dislike-btn' : '.like-btn';
+                        if (document.querySelector(oppositeBtn).classList.contains('active')) {
+                            document.querySelector(oppositeBtn).classList.remove('active');
+                            // Можно добавить запрос на удаление противоположной реакции
+                        }
+                    } else {
+                        alert(data.error);
+                    }
+                });
             }
         });
     });

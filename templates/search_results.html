@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">
+        {% if search_query %}
+            Результаты поиска: "{{ search_query }}"
+        {% else %}
+            Введите поисковый запрос
+        {% endif %}
+    </h2>
+    
+    {% if videos %}
+    <div class="row">
+        {% for video in videos %}
+        <div class="col-md-3 mb-4">
+            <a href="{{ url_for('video', id=video.id) }}" class="text-decoration-none text-dark">
+                <div class="card h-100 transition hover-shadow">
+                    <img src="{{ url_for('get_preview', filename=video.id ~ '.png') }}"
+                         class="card-img-top"
+                         alt="{{ video.title }}"
+                         onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/default-preview.png') }}';">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ video.title }}</h5>
+                        <p class="card-text text-muted">
+                            Просмотров: {{ video.views }}<br>
+                            {% if video.author_user %}
+                            Автор: {{ video.author_user.name }}
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% elif search_query %}
+    <div class="alert alert-info">
+        По запросу "{{ search_query }}" ничего не найдено.
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        Введите поисковый запрос в поле выше.
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .transition {
+        transition: all 0.3s ease;
+    }
+    .hover-shadow:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        transform: translateY(-5px);
+    }
+    .text-decoration-none {
+        text-decoration: none !important;
+    }
+</style>
+{% endblock %}

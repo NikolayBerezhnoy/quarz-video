@@ -1,6 +1,6 @@
 import datetime
-
 import sqlalchemy
+from sqlalchemy import orm
 from flask_login import UserMixin
 from sqlalchemy_serializer import SerializerMixin
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -13,19 +13,21 @@ class Video(SqlAlchemyBase, UserMixin, SerializerMixin):
 
     id = sqlalchemy.Column(sqlalchemy.Integer,
                            primary_key=True, autoincrement=True)
-    title = sqlalchemy.Column(sqlalchemy.String)
-    description = sqlalchemy.Column(sqlalchemy.String)
-    views = sqlalchemy.Column(sqlalchemy.Integer)
-    likes = sqlalchemy.Column(sqlalchemy.Integer)
-    dislikes = sqlalchemy.Column(sqlalchemy.Integer)
-    email = sqlalchemy.Column(sqlalchemy.String, unique=True)
+    title = sqlalchemy.Column(sqlalchemy.String, nullable=False)
+    description = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    views = sqlalchemy.Column(sqlalchemy.Integer, default=0)
+    likes = sqlalchemy.Column(sqlalchemy.Integer, default=0)
+    dislikes = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     author = sqlalchemy.Column(sqlalchemy.Integer,
-                                    sqlalchemy.ForeignKey('users.id'))
-
+                              sqlalchemy.ForeignKey('users.id'))
     modified_date = sqlalchemy.Column(sqlalchemy.DateTime,
-                                      default=datetime.datetime.now)
+                                    default=datetime.datetime.now)
+
+    # Удаляем email, так как он не нужен в модели видео
+    # email = sqlalchemy.Column(sqlalchemy.String, unique=True)
+
+    # Добавляем связь с пользователем
+    author_user = orm.relationship('User', back_populates='videos')
 
     def __repr__(self):
-        return f"{self.title}"
-
-
+        return f"Video(id={self.id}, title='{self.title}', author={self.author})"
