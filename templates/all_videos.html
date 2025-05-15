@@ -3,9 +3,11 @@
 <div class="row">
     {% for video in videos %}
     <div class="col-md-3 mb-3">  <!-- 3 колонки (12/4=3) -->
-        <a href="{{ url_for('video', id=loop.index) }}" class="text-decoration-none text-dark">  <!-- Ссылка на видео -->
+        <a href="{{ url_for('video', id=loop.index) }}" class="text-decoration-none text-dark">
+            <!-- Ссылка на видео -->
             <div class="card h-100 transition hover-shadow">  <!-- h-100 для одинаковой высоты -->
-                <img src="https://timeweb.com/ru/community/article/22/2270efcac88761766181c1aa5322b615.jpg" class="card-img-top" alt="Превью видео">
+                <img src="{{ url_for('get_preview', filename=video ~ '.png') }}" class="card-img-top"
+                     alt="Превью видео">
                 <div class="card-body">
                     <h5 class="card-title">Видео {{ loop.index }}</h5>
                     <p class="card-text">Описание видео или другой контент.</p>

@@ -6,9 +6,9 @@ from flask_login import login_user
 
 from data import db_session
 from data.users import User
+from forms.comment_form import CommentForm
 from forms.loginform import LoginForm
 from forms.user import RegisterForm
-from forms.comment_form import CommentForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "abc"
@@ -29,7 +29,12 @@ def load_user(user_id):
 @app.route('/')
 @app.route('/index')
 def index(title='Домашняя страница', user_name='no-name'):
-    return render_template('all_videos.html', title=title, videos=[1, 2, 3, 4, 1, 2, 3, 1, 2, 3])
+    return render_template('all_videos.html', title=title, videos=[1, 1, 1, 1, 1, ])
+
+
+@app.route('/previews/<filename>')
+def get_preview(filename):
+    return send_from_directory('content/previews', filename)
 
 
 @app.route('/video/<int:id>')
