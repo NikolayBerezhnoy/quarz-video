@@ -1,3 +1,4 @@
+openai~=0.28.0
 SQLAlchemy~=2.0.29
 Flask-Login~=0.6.3
 Werkzeug~=3.1.3
