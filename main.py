@@ -18,6 +18,7 @@ from data.videos import Video
 from data.likes import VideoLike
 
 import sqlalchemy
+from sqlalchemy.orm import joinedload
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "abc"
@@ -52,28 +53,44 @@ def index(title='Домашняя страница', user_name='no-name'):
 
 
 @app.route('/ai')
-def ai(title='AI', user_name='no-name'):
+def ai_recommendations():
     db_sess = db_session.create_session()
 
-    # Получаем все видео для анализа
-    all_videos = db_sess.query(Video).options(sqlalchemy.orm.joinedload(Video.author_user)).all()
-
     try:
-        # Получаем рекомендации от AI (строка вида "1,2,3")
-        response = get_data(all_videos)
+        # 1. Получаем все видео для анализа (только ID и название, чтобы не грузить лишнее)
+        all_videos = db_sess.query(Video.id, Video.title).all()
 
-        # Преобразуем строку в список ID (чисел)
-        recommended_ids = [int(id_str.strip()) for id_str in response.split(',') if id_str.strip().isdigit()]
+        # 2. Получаем рекомендации от ИИ (строка вида "1,2,3")
+        response = get_data(all_videos)  # Передаём только ID и названия
 
-        # Получаем только ID видео (без полных объектов)
-        videos = recommended_ids
+        # 3. Преобразуем ответ ИИ в список ID
+        recommended_ids = [
+            int(id_str.strip())
+            for id_str in response.split(',')
+            if id_str.strip().isdigit()
+        ]
+
+        # 4. Загружаем ТОЛЬКО рекомендованные видео (+ авторов) за 1 запрос
+        videos = db_sess.query(Video) \
+            .options(joinedload(Video.author_user)) \
+            .filter(Video.id.in_(recommended_ids)) \
+            .order_by(Video.views.desc()) \
+            .all()
+
+        # 5. Если ИИ вернул несуществующие ID - фильтруем их
+        videos = [v for v in videos if v.id in recommended_ids]
+
     except Exception as e:
-        print(f"Error: {e}")
-        # Если ошибка - передаем пустой список ID
+        print(f"AI recommendation error: {e}")
         videos = []
-        response = "Рекомендации недоступны"
+        response = "Не удалось загрузить рекомендации"
 
-    return render_template('ai.html', title=title, videos=videos, response=response)
+    return render_template(
+        'ai.html',
+        title="Рекомендации ИИ",
+        videos=videos,
+        response=response
+    )
 
 @app.route('/previews/<filename>')
 def get_preview(filename):

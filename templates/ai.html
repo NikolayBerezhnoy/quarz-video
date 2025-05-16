@@ -3,19 +3,21 @@
 <h3>Подборка от ИИ</h3>
 <div class="container">
     <div class="row">
-        {% for video_id in videos %}
+        {% for video in videos %}
         <div class="col-md-3 mb-4">
-            <a href="{{ url_for('video', id=video_id) }}" class="text-decoration-none text-dark">
+            <a href="{{ url_for('video', id=video.id) }}" class="text-decoration-none text-dark">
                 <div class="card h-100 transition hover-shadow">
-                    <!-- Превью по ID -->
-                    <img src="{{ url_for('get_preview', filename=video_id ~ '.png') }}"
+                    <img src="{{ url_for('get_preview', filename=video.id ~ '.png') }}"
                          class="card-img-top"
-                         alt="Video {{ video_id }}"
+                         alt="{{ video.title }}"
                          onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/default-preview.png') }}';">
                     <div class="card-body">
-                        <h5 class="card-title">Видео #{{ video_id }}</h5>
+                        <h5 class="card-title">{{ video.title }}</h5>
                         <p class="card-text text-muted">
-                            ID: {{ video_id }}
+                            Просмотров: {{ video.views }}<br>
+                            {% if video.author_user %}
+                            Автор: {{ video.author_user.name }}
+                            {% endif %}
                         </p>
                     </div>
                 </div>
@@ -26,15 +28,11 @@
 </div>
 
 <style>
-    .transition {
-        transition: all 0.3s ease;
-    }
+    .transition { transition: all 0.3s ease; }
     .hover-shadow:hover {
         box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
         transform: translateY(-5px);
     }
-    .text-decoration-none {
-        text-decoration: none !important;
-    }
+    .text-decoration-none { text-decoration: none !important; }
 </style>
 {% endblock %}
