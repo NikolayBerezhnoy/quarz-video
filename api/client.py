@@ -15,7 +15,11 @@ def get_data(videos=[]):
     # Define the request payload (data)
     data = {
         "model": "deepseek/deepseek-chat:free",
-        "messages": [{"role": "user", "content": "What is the meaning of life?"}]
+        "messages": [
+            {"role": "system", "content": "you are assistant for video hosting app"},
+            {"role": "user",
+             "content": f"выбери из этих описаний видео наиболее интересные и напиши список с их id в формате 1,2,3,4. Вот список видео {videos} ПИШИ ТОЛЬКО ЧИСЛА ЧЕРЕЗ ЗАПЯТУЮ БЕЗ ПРОБЕЛА"}
+        ]
     }
 
     # Send the POST request to the DeepSeek API

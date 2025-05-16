@@ -30,4 +30,4 @@ class Video(SqlAlchemyBase, UserMixin, SerializerMixin):
     author_user = orm.relationship('User', back_populates='videos')
 
     def __repr__(self):
-        return f"Video(id={self.id}, title='{self.title}', author={self.author})"
+        return f"Video(id={self.id}, title='{self.title}')"

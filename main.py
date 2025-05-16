@@ -2,7 +2,7 @@ import os
 from flask import request, url_for, jsonify
 from werkzeug.utils import secure_filename
 
-import uuid
+from api.client import get_data
 from flask_login import current_user
 from forms.video_upload import VideoUploadForm
 from flask import Flask, render_template, redirect, send_from_directory
@@ -50,6 +50,30 @@ def index(title='Домашняя страница', user_name='no-name'):
                .order_by(Video.modified_date.desc()).all()
     return render_template('all_videos.html', title=title, videos=videos)
 
+
+@app.route('/ai')
+def ai(title='AI', user_name='no-name'):
+    db_sess = db_session.create_session()
+
+    # Получаем все видео для анализа
+    all_videos = db_sess.query(Video).options(sqlalchemy.orm.joinedload(Video.author_user)).all()
+
+    try:
+        # Получаем рекомендации от AI (строка вида "1,2,3")
+        response = get_data(all_videos)
+
+        # Преобразуем строку в список ID (чисел)
+        recommended_ids = [int(id_str.strip()) for id_str in response.split(',') if id_str.strip().isdigit()]
+
+        # Получаем только ID видео (без полных объектов)
+        videos = recommended_ids
+    except Exception as e:
+        print(f"Error: {e}")
+        # Если ошибка - передаем пустой список ID
+        videos = []
+        response = "Рекомендации недоступны"
+
+    return render_template('ai.html', title=title, videos=videos, response=response)
 
 @app.route('/previews/<filename>')
 def get_preview(filename):

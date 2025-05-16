@@ -21,18 +21,18 @@
         <ul class="navbar-nav mr-auto">
             {% if current_user.is_authenticated %}
             <li class="nav-item active">
-                <a class="nav-link" href="/upload_video">загрузить видео <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/upload_video">Загрузить видео <span class="sr-only">(current)</span></a>
             </li>
             {% else %}
             <li class="nav-item active">
-                <a class="nav-link" href="/login">войти <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/login">Войти <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/register">регистрация</a>
+                <a class="nav-link" href="/register">Вегистрация</a>
             </li>
             {% endif %}
 
-            <li class="nav-item">
+            <li class="nav-item active">
                 <a class="nav-link" href="/ai">AI подборка видео ⭐</a>
             </li>
             <!--            <li class="nav-item dropdown">-->
